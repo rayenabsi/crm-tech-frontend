@@ -114,7 +114,7 @@ export default function ProduitsAdminPage() {
         {message && <div className="text-red-500 text-sm">{message}</div>}
 
         <div className="space-y-2">
-          <label htmlFor="product-name">Nom du produit</label>
+          <label htmlFor="product-name">Nom</label>
           <input
             id="product-name"
             type="text"
@@ -124,7 +124,7 @@ export default function ProduitsAdminPage() {
             className="border p-2 w-full rounded"
           />
 
-          <label htmlFor="product-description">Desciption du produit</label>
+          <label htmlFor="product-description">Desciption</label>
           <input
             id="product-description"
             type="text"
@@ -134,7 +134,7 @@ export default function ProduitsAdminPage() {
             className="border p-2 w-full rounded"
           />
 
-          <label htmlFor="product-price">Prix du produit</label>
+          <label htmlFor="product-price">Prix</label>
           <input
             id="product-price"
             type="number"

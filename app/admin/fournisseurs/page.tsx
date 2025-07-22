@@ -69,24 +69,31 @@ export default function FournisseursAdminPage() {
   return (
     <AdminLayout>
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">📦 Gestion des Fournisseurs</h1>
+        <h1 className="text-2xl font-bold">🏭 Gestion des Fournisseurs</h1>
         {message && <div className="text-sm text-red-500">{message}</div>}
 
         <div className="space-y-2">
+
+          <label htmlFor="name">Nom</label>
           <input
+            id="name"
             type="text"
             placeholder="Nom"
             value={form.name}
             onChange={(e) => setForm({...form, name: e.target.value})}
             className="border p-2 rounded w-full"
           />
+
+          <label htmlFor="email">Email</label>
           <input
+            id="email"
             type="email"
             placeholder="Email"
             value={form.email}
             onChange={(e) => setForm({...form, email: e.target.value})}
             className="border p-2 rounded w-full"
           />
+
           <button onClick={handleSubmit}
                   className="bg-blue-500 text-white p-2 rounded w-full">
             {editId ? "✅ Modifier" : "➕ Ajouter"}

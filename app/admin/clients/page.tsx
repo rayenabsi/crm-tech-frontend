@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import AdminLayout from "@/app/layouts/adminlayout";
 import {User} from "@/app/core/models/user.model";
 import {createClient, deleteUser, getAllClients, updateClient} from "@/app/core/services/user.service";
@@ -89,44 +89,63 @@ export default function ClientsAdminPage() {
         {message && <div className="text-red-500 text-sm">{message}</div>}
 
         <div className="space-y-2">
+
+          <label htmlFor="first-name">Prénom</label>
           <input
+            id="first-name"
             type="text"
             placeholder="Prénom"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="border p-2 w-full rounded"
           />
+
+          <label htmlFor="last-name">Nom</label>
           <input
+            id="last-name"
             type="text"
             placeholder="Nom"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="border p-2 w-full rounded"
           />
+
           {editId === null && (
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border p-2 w-full rounded"
-            />
+            <div>
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="border p-2 w-full rounded"
+              />
+            </div>
           )}
+
+          <label htmlFor="phone-number">Téléphone</label>
           <input
+            id="phone-number"
             type="text"
             placeholder="Téléphone"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="border p-2 w-full rounded"
           />
+
           {editId === null && (
-            <input
-              type="password"
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border p-2 w-full rounded"
-            />
+            <div>
+              <label htmlFor="password">Mot de passe</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border p-2 w-full rounded"
+              />
+            </div>
           )}
 
           {editId ? (
