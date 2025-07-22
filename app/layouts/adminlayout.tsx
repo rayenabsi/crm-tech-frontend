@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <li><Link href="/admin/produits">📦 Produits</Link></li>
           <li><Link href="/admin/abonnements">📑 Abonnements</Link></li>
           <li><Link href="/admin/users">👥 Utilisateurs</Link></li>
+          <li className="mt-10"><Link href="/login">🔒 Se déconnecter</Link></li>
         </ul>
       </aside>
 
