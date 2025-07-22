@@ -8,7 +8,7 @@ import {Provider} from "@/app/core/models/provider.model";
 import {getAllProviders} from "@/app/core/services/provider.service";
 
 interface FormData {
-  providerId: number | null;
+  providerId: number | undefined;
   name: string;
   description: string;
 }
@@ -17,7 +17,7 @@ export default function ProduitsAdminPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [form, setForm] = useState<FormData>({name: "", description: "", providerId: null});
+  const [form, setForm] = useState<FormData>({name: "", description: "", providerId: undefined});
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
@@ -60,8 +60,7 @@ export default function ProduitsAdminPage() {
         });
         setMessage("✅ Produit ajouté");
       }
-      setForm({name: "", description: "", providerId: null});
-      setEditId(null);
+      clearForm();
       await fetchProducts();
     } catch (error) {
       console.error(error);
@@ -81,8 +80,13 @@ export default function ProduitsAdminPage() {
   };
 
   const handleEdit = (p: Product) => {
-    setForm({name: p.name, description: p.description || "", providerId: null});
+    setForm({name: p.name, description: p.description || "", providerId: undefined});
     setEditId(p.id);
+  };
+
+  const clearForm = () => {
+    setForm({name: "", description: "", providerId: undefined});
+    setEditId(null);
   };
 
   useEffect(() => {
@@ -114,9 +118,12 @@ export default function ProduitsAdminPage() {
 
           {editId === null && (
             <select id="provider-select" className="border p-2 w-full rounded"
-                    value={form.providerId ?? undefined}
-                    onChange={(e) => setForm({...form, providerId: e.target.value ? Number(e.target.value) : null})}>
-              <option value="">Fournisseur</option>
+                    value={form.providerId}
+                    onChange={(e) => setForm({
+                      ...form,
+                      providerId: e.target.value ? Number(e.target.value) : undefined
+                    })}>
+              <option key={undefined} value={undefined}>Fournisseur</option>
               {providers.map((provider) => (
                 <option key={provider.id} value={provider.id}>
                   {provider.name}
