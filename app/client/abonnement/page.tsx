@@ -3,6 +3,10 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ClientLayout from "@/app/layouts/client-layout";
+import {Provider} from "@/app/core/models/provider.model";
+import {Product} from "@/app/core/models/product.model";
+import {getAllProviders} from "@/app/core/services/provider.service";
+import {getProductsByProvider} from "@/app/core/services/product.service";
 
 interface Produit {
   idProduit: number;
@@ -17,6 +21,10 @@ interface Fournisseur {
 }
 
 export default function AbonnementClientPage() {
+
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
   const [produits, setProduits] = useState<Produit[]>([]);
   const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>([]);
   const [selectedProduit, setSelectedProduit] = useState("");
@@ -26,6 +34,26 @@ export default function AbonnementClientPage() {
   const [quantite, setQuantite] = useState(1);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+
+  const fetchProviders = async () => {
+    try {
+      const res = await getAllProviders();
+      setProviders(res);
+    } catch (error) {
+      console.error(error);
+      setMessage("❌ Erreur chargement fournisseurs");
+    }
+  };
+
+  const fetchProductsByProvider = async (providerId: number) => {
+    try {
+      const res = await getProductsByProvider(providerId);
+      setProducts(res);
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Erreur de chargement des produits");
+    }
+  };
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
 
