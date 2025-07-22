@@ -1,5 +1,5 @@
 export interface CreateProductRequest {
-  providerId: string;
+  providerId: number;
   name: string;
   description?: string;
 }

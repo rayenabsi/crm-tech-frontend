@@ -1,59 +1,78 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
 import AdminLayout from "@/app/layouts/adminlayout";
+import {Product} from "@/app/core/models/product.model";
+import {createProduct, deleteProduct, getAllProducts, updateProduct} from "@/app/core/services/product.service";
+import {Provider} from "@/app/core/models/provider.model";
+import {getAllProviders} from "@/app/core/services/provider.service";
 
-interface Produit {
-  idProduit: number;
-  nomProduit: string;
-  terme: string;
-  billing: string;
+interface FormData {
+  providerId: number | null;
+  name: string;
+  description: string;
 }
 
 export default function ProduitsAdminPage() {
-  const [produits, setProduits] = useState<Produit[]>([]);
-  const [nomProduit, setNomProduit] = useState("");
-  const [terme, setTerme] = useState("");
-  const [billing, setBilling] = useState("");
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [form, setForm] = useState<FormData>({name: "", description: "", providerId: null});
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:8070/api",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const fetchProduits = async () => {
+  const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/produits");
-      setProduits(res.data);
+      const res = await getAllProducts();
+      setProducts(res);
     } catch (err) {
       console.error(err);
       setMessage("❌ Erreur de chargement des produits");
     }
   };
 
-  const addProduit = async () => {
+  const fetchProviders = async () => {
     try {
-      const res = await axiosInstance.post("/produits", { nomProduit, terme, billing });
-      setProduits([...produits, res.data]);
-      clearForm();
-      setMessage("✅ Produit ajouté");
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Échec de l'ajout");
+      const res = await getAllProviders();
+      setProviders(res);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const deleteProduit = async (id: number) => {
+  const handleSubmit = async () => {
     try {
-      await axiosInstance.delete(`/produits/${id}`);
-      setProduits(produits.filter((p) => p.idProduit !== id));
+      if (editId) {
+        await updateProduct(editId, {
+          name: form.name,
+          description: form.description || undefined
+        });
+        setMessage("✏️ Produit modifié");
+      } else {
+        if (!form.providerId) {
+          setMessage("Veuillez sélectionner un fournisseur");
+          return;
+        }
+        await createProduct({
+          name: form.name,
+          description: form.description || undefined,
+          providerId: form.providerId
+        });
+        setMessage("✅ Produit ajouté");
+      }
+      setForm({name: "", description: "", providerId: null});
+      setEditId(null);
+      await fetchProducts();
+    } catch (error) {
+      console.error(error);
+      setMessage("❌ Erreur lors de l'enregistrement");
+    }
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((p) => p.id !== id));
       setMessage("🗑️ Produit supprimé");
     } catch (err) {
       console.error(err);
@@ -61,35 +80,14 @@ export default function ProduitsAdminPage() {
     }
   };
 
-  const startEdit = (produit: Produit) => {
-    setEditId(produit.idProduit);
-    setNomProduit(produit.nomProduit);
-    setTerme(produit.terme);
-    setBilling(produit.billing);
-  };
-
-  const confirmEdit = async () => {
-    if (editId === null) return;
-    try {
-      const res = await axiosInstance.put(`/produits/${editId}`, { nomProduit, terme, billing });
-      setProduits(produits.map((p) => (p.idProduit === editId ? res.data : p)));
-      setMessage("✏️ Produit modifié");
-      clearForm();
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Échec de modification");
-    }
-  };
-
-  const clearForm = () => {
-    setNomProduit("");
-    setTerme("");
-    setBilling("");
-    setEditId(null);
+  const handleEdit = (p: Product) => {
+    setForm({name: p.name, description: p.description || "", providerId: null});
+    setEditId(p.id);
   };
 
   useEffect(() => {
-    fetchProduits();
+    fetchProducts().then();
+    fetchProviders().then();
   }, []);
 
   return (
@@ -101,54 +99,53 @@ export default function ProduitsAdminPage() {
         <div className="space-y-2">
           <input
             type="text"
-            placeholder="Nom du Produit"
-            value={nomProduit}
-            onChange={(e) => setNomProduit(e.target.value)}
+            placeholder="Nom du produit"
+            value={form.name}
+            onChange={(e) => setForm({...form, name: e.target.value})}
             className="border p-2 w-full rounded"
           />
           <input
             type="text"
-            placeholder="Terme"
-            value={terme}
-            onChange={(e) => setTerme(e.target.value)}
-            className="border p-2 w-full rounded"
-          />
-          <input
-            type="text"
-            placeholder="Billing"
-            value={billing}
-            onChange={(e) => setBilling(e.target.value)}
+            placeholder="Desciption du produit"
+            value={form.description}
+            onChange={(e) => setForm({...form, description: e.target.value})}
             className="border p-2 w-full rounded"
           />
 
-          {editId ? (
-            <button onClick={confirmEdit} className="bg-yellow-500 text-white w-full p-2 rounded">
-              ✅ Confirmer la modification
-            </button>
-          ) : (
-            <button onClick={addProduit} className="bg-blue-500 text-white w-full p-2 rounded">
-              ➕ Ajouter
-            </button>
+          {editId === null && (
+            <select id="provider-select" className="border p-2 w-full rounded"
+                    value={form.providerId ?? undefined}
+                    onChange={(e) => setForm({...form, providerId: e.target.value ? Number(e.target.value) : null})}>
+              <option value="">Fournisseur</option>
+              {providers.map((provider) => (
+                <option key={provider.id} value={provider.id}>
+                  {provider.name}
+                </option>
+              ))}
+            </select>
           )}
+
+          <button onClick={handleSubmit}
+                  className={editId ? "bg-yellow-500 text-white w-full p-2 rounded" : "bg-blue-500 text-white w-full p-2 rounded"}>
+            {editId ? "✅ Modifier" : "➕ Ajouter"}
+          </button>
         </div>
 
         <ul className="mt-6 divide-y">
-          {produits.map((produit) => (
-            <li key={produit.idProduit} className="flex justify-between items-center p-2">
+          {products.map((product) => (
+            <li key={product.id} className="flex justify-between items-center p-2">
               <span>
-                {produit.nomProduit} – {produit.terme} – {produit.billing}
+                {product.name} – {product.description || ''} – {product.provider.name}
               </span>
               <div className="space-x-2">
                 <button
-                  onClick={() => startEdit(produit)}
-                  className="bg-yellow-400 text-white px-2 py-1 rounded"
-                >
+                  onClick={() => handleEdit(product)}
+                  className="bg-yellow-400 text-white px-2 py-1 rounded">
                   ✏️ Modifier
                 </button>
                 <button
-                  onClick={() => deleteProduit(produit.idProduit)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded">
                   🗑️ Supprimer
                 </button>
               </div>

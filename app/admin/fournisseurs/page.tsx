@@ -82,10 +82,8 @@ export default function FournisseursAdminPage() {
             onChange={(e) => setForm({...form, email: e.target.value})}
             className="border p-2 rounded w-full"
           />
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white p-2 rounded w-full"
-          >
+          <button onClick={handleSubmit}
+                  className="bg-blue-500 text-white p-2 rounded w-full">
             {editId ? "✅ Modifier" : "➕ Ajouter"}
           </button>
         </div>

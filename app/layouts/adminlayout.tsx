@@ -11,8 +11,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <h2 className="text-xl font-bold mb-6">Admin Dashboard</h2>
         <ul className="space-y-2">
           <li><Link href="/admin/clients">📋 Clients</Link></li>
-          <li><Link href="/admin/produits">📦 Produits</Link></li>
           <li><Link href="/admin/fournisseurs">🏭 Fournisseurs</Link></li>
+          <li><Link href="/admin/produits">📦 Produits</Link></li>
           <li><Link href="/admin/abonnements">📑 Abonnements</Link></li>
           <li><Link href="/admin/users">👥 Utilisateurs</Link></li>
         </ul>
