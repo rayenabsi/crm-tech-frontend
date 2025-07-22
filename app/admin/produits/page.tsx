@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import AdminLayout from "@/app/layouts/adminlayout";
+
 interface Produit {
   idProduit: number;
   nomProduit: string;
