@@ -1,34 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
 import AdminLayout from "@/app/layouts/adminlayout";
-
-interface Fournisseur {
-  idFournisseur?: number;
-  nom: string;
-  email: string;
-}
+import {Provider} from "@/app/core/models/provider.model";
+import {ProviderRequest} from "@/app/core/models/request/provider-request.model";
+import {createProvider, deleteProvider, getAllProviders, updateProvider} from "@/app/core/services/provider.service";
 
 export default function FournisseursAdminPage() {
-  const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>([]);
-  const [form, setForm] = useState<Fournisseur>({ nom: "", email: "" });
+
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [form, setForm] = useState<ProviderRequest>({name: "", email: ""});
   const [editId, setEditId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:8070/api",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const fetchFournisseurs = async () => {
+  const fetchProviders = async () => {
     try {
-      const res = await axiosInstance.get("/fournisseurs");
-      setFournisseurs(res.data);
+      const res = await getAllProviders();
+      setProviders(res);
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur de chargement");
@@ -38,15 +26,15 @@ export default function FournisseursAdminPage() {
   const handleSubmit = async () => {
     try {
       if (editId) {
-        await axiosInstance.put(`/fournisseurs/${editId}`, form);
+        await updateProvider(editId, form);
         setMessage("✏️ Fournisseur modifié");
       } else {
-        await axiosInstance.post("/fournisseurs", form);
+        await createProvider(form);
         setMessage("✅ Fournisseur ajouté");
       }
-      setForm({ nom: "", email: "" });
+      setForm({name: "", email: ""});
       setEditId(null);
-      fetchFournisseurs();
+      await fetchProviders();
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur lors de l'enregistrement");
@@ -55,22 +43,22 @@ export default function FournisseursAdminPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await axiosInstance.delete(`/fournisseurs/${id}`);
+      await deleteProvider(id);
       setMessage("🗑️ Fournisseur supprimé");
-      fetchFournisseurs();
+      await fetchProviders();
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur de suppression");
     }
   };
 
-  const handleEdit = (f: Fournisseur) => {
-    setForm({ nom: f.nom, email: f.email });
-    setEditId(f.idFournisseur!);
+  const handleEdit = (f: Provider) => {
+    setForm({name: f.name, email: f.email});
+    setEditId(f.id);
   };
 
   useEffect(() => {
-    fetchFournisseurs();
+    fetchProviders().then();
   }, []);
 
   return (
@@ -83,15 +71,15 @@ export default function FournisseursAdminPage() {
           <input
             type="text"
             placeholder="Nom"
-            value={form.nom}
-            onChange={(e) => setForm({ ...form, nom: e.target.value })}
+            value={form.name}
+            onChange={(e) => setForm({...form, name: e.target.value})}
             className="border p-2 rounded w-full"
           />
           <input
             type="email"
             placeholder="Email"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            onChange={(e) => setForm({...form, email: e.target.value})}
             className="border p-2 rounded w-full"
           />
           <button
@@ -103,17 +91,17 @@ export default function FournisseursAdminPage() {
         </div>
 
         <ul className="space-y-2 mt-6">
-          {fournisseurs.map((f) => (
-            <li key={f.idFournisseur} className="border p-2 rounded flex justify-between items-center">
+          {providers.map((f) => (
+            <li key={f.id} className="border p-2 rounded flex justify-between items-center">
               <div>
-                <p><strong>{f.nom}</strong></p>
+                <p><strong>{f.name}</strong></p>
                 <p>{f.email}</p>
               </div>
               <div className="space-x-2">
                 <button onClick={() => handleEdit(f)} className="bg-yellow-500 text-white px-3 py-1 rounded">
                   ✏️
                 </button>
-                <button onClick={() => handleDelete(f.idFournisseur!)} className="bg-red-500 text-white px-3 py-1 rounded">
+                <button onClick={() => handleDelete(f.id!)} className="bg-red-500 text-white px-3 py-1 rounded">
                   🗑️
                 </button>
               </div>

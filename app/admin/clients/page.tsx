@@ -2,8 +2,8 @@
 
 import {useEffect, useState} from "react";
 import AdminLayout from "@/app/layouts/adminlayout";
-import {Role, User} from "@/app/core/models/user.model";
-import axiosInstance from "@/app/core/axios/axios-instance";
+import {User} from "@/app/core/models/user.model";
+import {createClient, deleteUser, getAllClients, updateClient} from "@/app/core/services/user.service";
 
 export default function ClientsAdminPage() {
 
@@ -18,8 +18,8 @@ export default function ClientsAdminPage() {
 
   const fetchClients = async () => {
     try {
-      const res = await axiosInstance.get(`/users/role/${Role.CLIENT.toString()}`);
-      setClients(res.data);
+      const clients: User[] = await getAllClients();
+      setClients(clients);
     } catch (err) {
       console.error(err);
       setMessage("❌ Erreur de chargement");
@@ -28,8 +28,8 @@ export default function ClientsAdminPage() {
 
   const addClient = async () => {
     try {
-      const res = await axiosInstance.post('/users/client', {firstName, lastName, email, phoneNumber, password});
-      setClients([...clients, res.data]);
+      const client: User = await createClient({firstName, lastName, email, phoneNumber, password});
+      setClients([...clients, client]);
       clearForm();
       setMessage("✅ Client ajouté");
     } catch (err) {
@@ -40,7 +40,7 @@ export default function ClientsAdminPage() {
 
   const deleteClient = async (id: number) => {
     try {
-      await axiosInstance.delete(`/users/${id}`);
+      await deleteUser(id);
       setClients(clients.filter((c) => c.id !== id));
       setMessage("🗑️ Client supprimé");
     } catch (err) {
@@ -59,8 +59,8 @@ export default function ClientsAdminPage() {
   const confirmEdit = async () => {
     if (!editId) return;
     try {
-      const res = await axiosInstance.put(`/users/client/${editId}`, {firstName, lastName, phoneNumber});
-      setClients(clients.map((c) => (c.id === editId ? res.data : c)));
+      const client: User = await updateClient(editId, {firstName, lastName, phoneNumber});
+      setClients(clients.map((c) => (c.id === editId ? client : c)));
       setMessage("✏️ Client modifié");
       clearForm();
     } catch (err) {

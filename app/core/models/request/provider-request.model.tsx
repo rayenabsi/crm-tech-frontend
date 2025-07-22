@@ -1,3 +1,8 @@
+export interface ProviderRequest {
+  name: string;
+  email: string;
+}
+
 export interface CreateProviderRequest {
   name: string;
   email: string;
