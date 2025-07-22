@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ReactNode } from "react";
+import {ReactNode} from "react";
 
-export default function UserSalesLayout({ children }: { children: ReactNode }) {
+export default function UserSalesLayout({children}: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen bg-gray-100 font-sans">
       {/* Sidebar */}

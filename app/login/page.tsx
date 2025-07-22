@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import {useState} from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
+import {Role, User} from "@/app/core/models/user.model";
 
 export default function LoginPage() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,21 +14,24 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
+
       const res = await axios.post("http://localhost:8070/api/auth/login", {
         email,
         password,
       });
 
-      const token = res.data.token;
+      const token: string = res.data.token;
+      const user: User = res.data.user;
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       const decoded = JSON.parse(atob(token.split(".")[1]));
       const role = decoded?.role || decoded?.authorities?.[0];
 
-      if (role.includes("ADMIN")) router.push("/admin/clients");
-      else if (role.includes("USER_SALES")) router.push("/user-sales/clients");
-      else if (role.includes("USER_TECH")) router.push("/usertech/dashboard");
-      else if (role.includes("CLIENT")) router.push("/client/abonnement");
+      if (role.includes(Role.ADMIN.toString())) router.push("/admin/clients");
+      else if (role.includes(Role.SALES_AGENT.toString())) router.push("/user-sales/clients");
+      else if (role.includes(Role.TECH_AGENT.toString())) router.push("/usertech/dashboard");
+      else if (role.includes(Role.CLIENT.toString())) router.push("/client/abonnement");
       else router.push("/");
 
     } catch (err) {

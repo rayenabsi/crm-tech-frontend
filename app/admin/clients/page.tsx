@@ -1,36 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import {useEffect, useState} from "react";
 import AdminLayout from "@/app/layouts/adminlayout";
-
-interface Client {
-  idClient: number;
-  nom: string;
-  email: string;
-  telephone: string;
-}
+import {Role, User} from "@/app/core/models/user.model";
+import axiosInstance from "@/app/core/axios/axios-instance";
 
 export default function ClientsAdminPage() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [nom, setNom] = useState("");
+
+  const [clients, setClients] = useState<User[]>([]);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [telephone, setTelephone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:8070/api",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
   const fetchClients = async () => {
     try {
-      const res = await axiosInstance.get("/clients");
+      const res = await axiosInstance.get(`/users/role/${Role.CLIENT.toString()}`);
       setClients(res.data);
     } catch (err) {
       console.error(err);
@@ -40,7 +28,7 @@ export default function ClientsAdminPage() {
 
   const addClient = async () => {
     try {
-      const res = await axiosInstance.post("/clients", { nom, email, telephone });
+      const res = await axiosInstance.post('/users/client', {firstName, lastName, email, phoneNumber, password});
       setClients([...clients, res.data]);
       clearForm();
       setMessage("✅ Client ajouté");
@@ -52,8 +40,8 @@ export default function ClientsAdminPage() {
 
   const deleteClient = async (id: number) => {
     try {
-      await axiosInstance.delete(`/clients/${id}`);
-      setClients(clients.filter((c) => c.idClient !== id));
+      await axiosInstance.delete(`/users/${id}`);
+      setClients(clients.filter((c) => c.id !== id));
       setMessage("🗑️ Client supprimé");
     } catch (err) {
       console.error(err);
@@ -61,18 +49,18 @@ export default function ClientsAdminPage() {
     }
   };
 
-  const startEdit = (client: Client) => {
-    setEditId(client.idClient);
-    setNom(client.nom);
-    setEmail(client.email);
-    setTelephone(client.telephone);
+  const startEdit = (client: User) => {
+    setEditId(client.id);
+    setFirstName(client.firstName);
+    setLastName(client.lastName);
+    setPhoneNumber(client.phoneNumber);
   };
 
   const confirmEdit = async () => {
-    if (editId === null) return;
+    if (!editId) return;
     try {
-      const res = await axiosInstance.put(`/clients/${editId}`, { nom, email, telephone });
-      setClients(clients.map((c) => (c.idClient === editId ? res.data : c)));
+      const res = await axiosInstance.put(`/users/client/${editId}`, {firstName, lastName, phoneNumber});
+      setClients(clients.map((c) => (c.id === editId ? res.data : c)));
       setMessage("✏️ Client modifié");
       clearForm();
     } catch (err) {
@@ -82,14 +70,16 @@ export default function ClientsAdminPage() {
   };
 
   const clearForm = () => {
-    setNom("");
+    setFirstName("");
+    setLastName("");
     setEmail("");
-    setTelephone("");
+    setPhoneNumber("");
+    setPassword("");
     setEditId(null);
   };
 
   useEffect(() => {
-    fetchClients();
+    fetchClients().then();
   }, []);
 
   return (
@@ -101,25 +91,43 @@ export default function ClientsAdminPage() {
         <div className="space-y-2">
           <input
             type="text"
-            placeholder="Nom"
-            value={nom}
-            onChange={(e) => setNom(e.target.value)}
-            className="border p-2 w-full rounded"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Prénom"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             className="border p-2 w-full rounded"
           />
           <input
             type="text"
-            placeholder="Téléphone"
-            value={telephone}
-            onChange={(e) => setTelephone(e.target.value)}
+            placeholder="Nom"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             className="border p-2 w-full rounded"
           />
+          {editId === null && (
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border p-2 w-full rounded"
+            />
+          )}
+          <input
+            type="text"
+            placeholder="Téléphone"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="border p-2 w-full rounded"
+          />
+          {editId === null && (
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border p-2 w-full rounded"
+            />
+          )}
 
           {editId ? (
             <button onClick={confirmEdit} className="bg-yellow-500 text-white w-full p-2 rounded">
@@ -134,8 +142,8 @@ export default function ClientsAdminPage() {
 
         <ul className="mt-6 divide-y">
           {clients.map((client) => (
-            <li key={client.idClient} className="flex justify-between items-center p-2">
-              <span>{client.nom} – {client.email} – {client.telephone}</span>
+            <li key={client.id} className="flex justify-between items-center p-2">
+              <span>{client.firstName} – {client.lastName} – {client.email} – {client.phoneNumber}</span>
               <div className="space-x-2">
                 <button
                   onClick={() => startEdit(client)}
@@ -144,7 +152,7 @@ export default function ClientsAdminPage() {
                   ✏️ Modifier
                 </button>
                 <button
-                  onClick={() => deleteClient(client.idClient)}
+                  onClick={() => deleteClient(client.id)}
                   className="bg-red-500 text-white px-2 py-1 rounded"
                 >
                   🗑️ Supprimer
