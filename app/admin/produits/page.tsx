@@ -11,13 +11,14 @@ interface FormData {
   providerId: number | undefined;
   name: string;
   description: string;
+  price: number;
 }
 
 export default function ProduitsAdminPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [form, setForm] = useState<FormData>({name: "", description: "", providerId: undefined});
+  const [form, setForm] = useState<FormData>({name: "", description: "", providerId: undefined, price: 0});
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
@@ -45,11 +46,16 @@ export default function ProduitsAdminPage() {
       if (editId) {
         const res = await updateProduct(editId, {
           name: form.name,
-          description: form.description || undefined
+          description: form.description || undefined,
+          price: form.price!
         });
         setProducts(products.map((p) => (p.id === editId ? res : p)));
         setMessage("✏️ Produit modifié");
       } else {
+        if (!form.price || form.price === 0) {
+          setMessage("Veuillez saisir le prix");
+          return;
+        }
         if (!form.providerId) {
           setMessage("Veuillez sélectionner un fournisseur");
           return;
@@ -57,6 +63,7 @@ export default function ProduitsAdminPage() {
         const res = await createProduct({
           name: form.name,
           description: form.description || undefined,
+          price: form.price!,
           providerId: form.providerId
         });
         setProducts([res, ...products]);
@@ -81,12 +88,17 @@ export default function ProduitsAdminPage() {
   };
 
   const handleEdit = (p: Product) => {
-    setForm({name: p.name, description: p.description || "", providerId: undefined});
+    setForm({
+      name: p.name,
+      description: p.description || "",
+      price: p.price,
+      providerId: undefined
+    });
     setEditId(p.id);
   };
 
   const clearForm = () => {
-    setForm({name: "", description: "", providerId: undefined});
+    setForm({name: "", description: "", providerId: undefined, price: 0});
     setEditId(null);
   };
 
@@ -102,14 +114,19 @@ export default function ProduitsAdminPage() {
         {message && <div className="text-red-500 text-sm">{message}</div>}
 
         <div className="space-y-2">
+          <label htmlFor="product-name">Nom du produit</label>
           <input
+            id="product-name"
             type="text"
             placeholder="Nom du produit"
             value={form.name}
             onChange={(e) => setForm({...form, name: e.target.value})}
             className="border p-2 w-full rounded"
           />
+
+          <label htmlFor="product-description">Desciption du produit</label>
           <input
+            id="product-description"
             type="text"
             placeholder="Desciption du produit"
             value={form.description}
@@ -117,21 +134,37 @@ export default function ProduitsAdminPage() {
             className="border p-2 w-full rounded"
           />
 
+          <label htmlFor="product-price">Prix du produit</label>
+          <input
+            id="product-price"
+            type="number"
+            min={0}
+            placeholder="Prix du produit"
+            value={form.price}
+            onChange={(e) => setForm({
+              ...form,
+              price: (e.target.value && !isNaN(Number(e.target.value))) ? Number(e.target.value) : 0
+            })}
+            className="border p-2 w-full rounded"
+          />
+
           {editId === null && (
-            <select id="provider-select" className="border p-2 w-full rounded"
-                    value={form.providerId}
-                    onChange={(e) => setForm({
-                      ...form,
-                      providerId: e.target.value ? Number(e.target.value) : undefined
-                    })}>
-              <option key={undefined} value={undefined}>Fournisseur</option>
-              {providers.map((provider) => (
-                <option key={provider.id} value={provider.id}>
-                  {provider.name}
-                </option>
-              ))}
-            </select>
-          )}
+            <div>
+              <label htmlFor="product-provider">Fournisseur</label>
+              <select id="product-provider" className="border p-2 w-full rounded"
+                      value={form.providerId}
+                      onChange={(e) => setForm({
+                        ...form,
+                        providerId: (e.target.value && !isNaN(Number(e.target.value))) ? Number(e.target.value) : undefined
+                      })}>
+                <option key={undefined} value={undefined}>Fournisseur</option>
+                {providers.map((provider) => (
+                  <option key={provider.id} value={provider.id}>
+                    {provider.name}
+                  </option>
+                ))}
+              </select>
+            </div>)}
 
           <button onClick={handleSubmit}
                   className={editId ? "bg-yellow-500 text-white w-full p-2 rounded" : "bg-blue-500 text-white w-full p-2 rounded"}>
@@ -143,7 +176,7 @@ export default function ProduitsAdminPage() {
           {products.map((product) => (
             <li key={product.id} className="flex justify-between items-center p-2">
               <span>
-                {product.name} – {product.description || ''} – {product.provider.name}
+                {product.name} – {product.description || ''} – {product.price} TND – {product.provider.name}
               </span>
               <div className="space-x-2">
                 <button
