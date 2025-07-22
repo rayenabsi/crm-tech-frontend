@@ -26,15 +26,15 @@ export default function FournisseursAdminPage() {
   const handleSubmit = async () => {
     try {
       if (editId) {
-        await updateProvider(editId, form);
+        const res = await updateProvider(editId, form);
         setMessage("✏️ Fournisseur modifié");
+        setProviders(providers.map((p) => (p.id === editId ? res : p)));
       } else {
-        await createProvider(form);
+        const res = await createProvider(form);
         setMessage("✅ Fournisseur ajouté");
+        setProviders([res, ...providers]);
       }
-      setForm({name: "", email: ""});
-      setEditId(null);
-      await fetchProviders();
+      clearForm();
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur lors de l'enregistrement");
@@ -45,7 +45,7 @@ export default function FournisseursAdminPage() {
     try {
       await deleteProvider(id);
       setMessage("🗑️ Fournisseur supprimé");
-      await fetchProviders();
+      setProviders(providers.filter((p) => p.id !== id));
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur de suppression");
@@ -55,6 +55,11 @@ export default function FournisseursAdminPage() {
   const handleEdit = (f: Provider) => {
     setForm({name: f.name, email: f.email});
     setEditId(f.id);
+  };
+
+  const clearForm = () => {
+    setForm({name: "", email: ""});
+    setEditId(null);
   };
 
   useEffect(() => {

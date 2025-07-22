@@ -29,7 +29,7 @@ export default function ClientsAdminPage() {
   const addClient = async () => {
     try {
       const client: User = await createClient({firstName, lastName, email, phoneNumber, password});
-      setClients([...clients, client]);
+      setClients([client, ...clients]);
       clearForm();
       setMessage("✅ Client ajouté");
     } catch (err) {

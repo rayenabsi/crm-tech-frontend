@@ -43,25 +43,26 @@ export default function ProduitsAdminPage() {
   const handleSubmit = async () => {
     try {
       if (editId) {
-        await updateProduct(editId, {
+        const res = await updateProduct(editId, {
           name: form.name,
           description: form.description || undefined
         });
+        setProducts(products.map((p) => (p.id === editId ? res : p)));
         setMessage("✏️ Produit modifié");
       } else {
         if (!form.providerId) {
           setMessage("Veuillez sélectionner un fournisseur");
           return;
         }
-        await createProduct({
+        const res = await createProduct({
           name: form.name,
           description: form.description || undefined,
           providerId: form.providerId
         });
+        setProducts([res, ...products]);
         setMessage("✅ Produit ajouté");
       }
       clearForm();
-      await fetchProducts();
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur lors de l'enregistrement");
