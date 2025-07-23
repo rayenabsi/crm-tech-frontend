@@ -260,12 +260,12 @@ export default function SubscriptionsPage() {
                       >
                         Détails
                       </button>
-                      <button
-                        onClick={() => console.log("Modifier", subscription.id)}
-                        className="text-yellow-600 hover:text-yellow-900"
-                      >
-                        Modifier
-                      </button>
+                      {/*<button*/}
+                      {/*  onClick={() => console.log("Modifier", subscription.id)}*/}
+                      {/*  className="text-yellow-600 hover:text-yellow-900"*/}
+                      {/*>*/}
+                      {/*  Modifier*/}
+                      {/*</button>*/}
                     </td>
                   </tr>
                 ))
