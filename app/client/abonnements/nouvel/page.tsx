@@ -9,8 +9,11 @@ import {PaymentMethod, SubscriptionPeriod} from "@/app/core/models/subscription.
 import {CreateSubscriptionRequest} from "@/app/core/models/request/subscription-request.model";
 import {createSubscription} from "@/app/core/services/subscription.service";
 import ClientLayout from "@/app/layouts/client-layout";
+import {useRouter} from "next/navigation";
 
 export default function NewClientSubscriptionPage() {
+
+  const router = useRouter();
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -120,6 +123,7 @@ export default function NewClientSubscriptionPage() {
       const data = await createSubscription(request);
       clearForm();
       alert("Votre abonnement a été créé avec succès !");
+      router.back();
     } catch (err) {
       setError("❌ Échec de la création de l'abonnement");
       console.error(err);

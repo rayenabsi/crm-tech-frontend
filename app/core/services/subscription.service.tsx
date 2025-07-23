@@ -7,6 +7,11 @@ export const createSubscription = async (request: CreateSubscriptionRequest) => 
   return res.data;
 };
 
+export const getSubscriptionById = async (id: number) => {
+  const res = await axiosInstance.get<Subscription>(`/subscriptions/${id}`);
+  return res.data;
+};
+
 export const getAllSubscriptions = async () => {
   const res = await axiosInstance.get<Subscription[]>('/subscriptions/');
   return res.data;
