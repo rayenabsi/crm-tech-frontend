@@ -10,7 +10,7 @@ import {CreateSubscriptionRequest} from "@/app/core/models/request/subscription-
 import {createSubscription} from "@/app/core/services/subscription.service";
 import ClientLayout from "@/app/layouts/client-layout";
 
-export default function AbonnementClientPage() {
+export default function NewClientSubscriptionPage() {
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [products, setProducts] = useState<Product[]>([]);

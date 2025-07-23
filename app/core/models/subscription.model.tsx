@@ -5,8 +5,8 @@ import {Product} from "@/app/core/models/product.model";
 export interface Subscription {
   id: number;
   period: SubscriptionPeriod;
-  startDate: number;
-  endDate: number;
+  startDate: string;
+  endDate: string;
   status: SubscriptionStatus;
   billing: Billing;
   user: User;
@@ -20,7 +20,7 @@ export interface Billing {
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
   transactionId: string;
-  paymentDate: number;
+  paymentDate: string;
   currency: string;
 }
 
