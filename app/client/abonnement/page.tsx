@@ -10,18 +10,6 @@ import {CreateSubscriptionRequest} from "@/app/core/models/request/subscription-
 import {createSubscription} from "@/app/core/services/subscription.service";
 import ClientLayout from "@/app/layouts/client-layout";
 
-interface Produit {
-  idProduit: number;
-  nomProduit: string;
-  terme: string;
-  billing: string;
-}
-
-interface Fournisseur {
-  idFournisseur: number;
-  nom: string;
-}
-
 export default function AbonnementClientPage() {
 
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -32,9 +20,7 @@ export default function AbonnementClientPage() {
   const [subscriptionPeriod, setSubscriptionPeriod] = useState<SubscriptionPeriod | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
 
-  const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState({
     providers: true,
     products: false
