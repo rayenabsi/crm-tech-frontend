@@ -134,7 +134,7 @@ export default function ProduitsAdminPage() {
             className="border p-2 w-full rounded"
           />
 
-          <label htmlFor="product-price">Prix</label>
+          <label htmlFor="product-price">Prix par mois</label>
           <input
             id="product-price"
             type="number"
