@@ -231,6 +231,7 @@ export default function ProduitsAdminPage() {
                     required
                     className="w-full p-2 border rounded"
                   >
+                    <option value="">Selectionner un fournisseur</option>
                     {providers.map(provider => (
                       <option key={provider.id} value={provider.id}>
                         {provider.name}
