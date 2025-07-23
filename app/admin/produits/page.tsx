@@ -176,7 +176,7 @@ export default function ProduitsAdminPage() {
           {products.map((product) => (
             <li key={product.id} className="flex justify-between items-center p-2">
               <span>
-                {product.name} – {product.description || ''} – {product.price} TND – {product.provider.name}
+                {product.name} – {product.description || 'Aucune description'} – {product.price} TND – {product.provider.name}
               </span>
               <div className="space-x-2">
                 <button

@@ -32,7 +32,7 @@ export default function ClientSubscriptionsPage() {
   }, []);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString('fr-FR');
   };
 
   const getNextBillingDate = (lastBillingDate: string, period: SubscriptionPeriod) => {
@@ -123,7 +123,7 @@ export default function ClientSubscriptionsPage() {
                   <div>
                     <h2 className="text-xl font-semibold mb-2">{subscription.provider.name}</h2>
                     <p className="text-gray-600 mb-4">
-                      {subscription.products.length} produit(s) · {printSubscriptionPeriodName(subscription.period)}
+                      {subscription.products.length} produit(s) • {printSubscriptionPeriodName(subscription.period)}
                     </p>
 
                     <div className="space-y-2">
@@ -132,17 +132,17 @@ export default function ClientSubscriptionsPage() {
                         <span className={`px-2 py-1 rounded text-sm font-medium ${
                           subscription.status === SubscriptionStatus.ACTIVE ? "bg-green-100 text-green-800"
                             : subscription.status === SubscriptionStatus.WAITING_FOR_PAYMENT ? "bg-yellow-100 text-yellow-800"
-                              : "bg-orange-600 text-red-800"
+                              : "bg-red-100 text-red-800"
                         }`}>
                         {printSubscriptionStatus(subscription.status)}
                       </span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 text-gray-500">Commencé:</span>
+                        <span className="w-32 text-gray-500">Date de début:</span>
                         <span>{formatDate(subscription.startDate)}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 text-gray-500">Expire:</span>
+                        <span className="w-32 text-gray-500">Date d'éxpiration:</span>
                         <span>{formatDate(subscription.endDate)}</span>
                       </div>
                     </div>
@@ -152,7 +152,7 @@ export default function ClientSubscriptionsPage() {
                     <div className="text-2xl font-bold mb-2">
                       {subscription.billing.amount.toFixed(2)}
                       <span className="text-lg font-normal text-gray-500 ml-1">
-                       TND/{printSubscriptionPeriodName(subscription.period)}
+                       {subscription.billing.currency}/{printSubscriptionPeriodName(subscription.period)}
                     </span>
                     </div>
 

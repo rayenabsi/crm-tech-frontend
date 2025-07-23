@@ -10,7 +10,7 @@ export default function ClientLayout({children}: { children: ReactNode }) {
       <aside className="w-64 bg-gray-800 text-white p-4">
         <h2 className="text-xl font-bold mb-6">Bienvenue</h2>
         <ul className="space-y-2">
-          <li><Link href="/client/abonnement">📑 Mes abonnements</Link></li>
+          <li><Link href="/client/abonnements">📑 Mes abonnements</Link></li>
           <li className="mt-10"><Link href="/login">🔒 Se déconnecter</Link></li>
         </ul>
       </aside>

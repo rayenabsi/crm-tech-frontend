@@ -123,7 +123,7 @@ export default function NewClientSubscriptionPage() {
       const data = await createSubscription(request);
       clearForm();
       alert("Votre abonnement a été créé avec succès !");
-      router.back();
+      router.push("/client/abonnements");
     } catch (err) {
       setError("❌ Échec de la création de l'abonnement");
       console.error(err);
@@ -176,7 +176,17 @@ export default function NewClientSubscriptionPage() {
   return (
     <ClientLayout>
       <div className="max-w-1xl mx-auto p-6 space-y-8">
-        <h1 className="text-3xl font-bold text-center">Créer un nouvel abonnement</h1>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Créer un nouvel abonnement</h1>
+          </div>
+          <button
+            onClick={() => router.push("/client/abonnements")}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-medium"
+          >
+            ← Retour
+          </button>
+        </div>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -226,7 +236,7 @@ export default function NewClientSubscriptionPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="font-medium">{product.name}</h3>
-                        <p className="text-sm text-gray-600">{product.description}</p>
+                        <p className="text-sm text-gray-600">{product.description || '-'}</p>
                       </div>
                       <span className="font-semibold">{product.price.toFixed(2)} TND/mois</span>
                     </div>
@@ -376,7 +386,7 @@ export default function NewClientSubscriptionPage() {
                     Vous économisez {(selectedProducts.reduce((sum, id) => {
                     const product = products.find(p => p.id === id);
                     return sum + (product ? product.price * 6 * 0.05 : 0);
-                  }, 0)).toFixed(2)} TND avec un abonnement de 6 mois!
+                  }, 0)).toFixed(2)} TND avec un abonnement de {printSubscriptionPeriodName()}!
                   </p>
                 )}
                 {subscriptionPeriod === SubscriptionPeriod.ONE_YEAR && (
@@ -384,7 +394,7 @@ export default function NewClientSubscriptionPage() {
                     Vous économisez {(selectedProducts.reduce((sum, id) => {
                     const product = products.find(p => p.id === id);
                     return sum + (product ? product.price * 12 * 0.1 : 0);
-                  }, 0)).toFixed(2)} TND avec un abonnement de 1 an!
+                  }, 0)).toFixed(2)} TND avec un abonnement de {printSubscriptionPeriodName()}!
                   </p>
                 )}
                 {subscriptionPeriod === SubscriptionPeriod.TWO_YEARS && (
@@ -392,7 +402,7 @@ export default function NewClientSubscriptionPage() {
                     Vous économisez {(selectedProducts.reduce((sum, id) => {
                     const product = products.find(p => p.id === id);
                     return sum + (product ? product.price * 24 * 0.2 : 0);
-                  }, 0)).toFixed(2)} TND avec un abonnement de 2 ans!
+                  }, 0)).toFixed(2)} TND avec un abonnement de {printSubscriptionPeriodName()}!
                   </p>
                 )}
               </div>
