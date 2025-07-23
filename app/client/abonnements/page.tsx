@@ -128,7 +128,7 @@ export default function ClientSubscriptionsPage() {
 
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-32 text-gray-500">Status:</span>
+                        <span className="w-32 text-gray-500">Statut:</span>
                         <span className={`px-2 py-1 rounded text-sm font-medium ${
                           subscription.status === SubscriptionStatus.ACTIVE ? "bg-green-100 text-green-800"
                             : subscription.status === SubscriptionStatus.WAITING_FOR_PAYMENT ? "bg-yellow-100 text-yellow-800"
