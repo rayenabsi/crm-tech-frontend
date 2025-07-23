@@ -18,6 +18,7 @@ export default function ProduitsAdminPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormData>({name: "", description: "", providerId: undefined, price: 0});
   const [message, setMessage] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
@@ -29,6 +30,8 @@ export default function ProduitsAdminPage() {
     } catch (err) {
       console.error(err);
       setMessage("❌ Erreur de chargement des produits");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,6 +109,16 @@ export default function ProduitsAdminPage() {
     fetchProducts().then();
     fetchProviders().then();
   }, []);
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

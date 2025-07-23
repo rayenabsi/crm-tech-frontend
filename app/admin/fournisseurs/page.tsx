@@ -9,6 +9,7 @@ import {createProvider, deleteProvider, getAllProviders, updateProvider} from "@
 export default function FournisseursAdminPage() {
 
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<ProviderRequest>({name: "", email: ""});
   const [editId, setEditId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
@@ -20,6 +21,8 @@ export default function FournisseursAdminPage() {
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur de chargement");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,6 +68,16 @@ export default function FournisseursAdminPage() {
   useEffect(() => {
     fetchProviders().then();
   }, []);
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
