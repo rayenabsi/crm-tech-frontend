@@ -22,6 +22,6 @@ export const getAllProducts = async () => {
 };
 
 export const getProductsByProvider = async (providerId: number) => {
-  const res = await axiosInstance.get<Product[]>(`/products/${providerId}`);
+  const res = await axiosInstance.get<Product[]>(`/products/provider/${providerId}`);
   return res.data;
 };
