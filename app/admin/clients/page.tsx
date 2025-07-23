@@ -124,7 +124,6 @@ export default function ClientsAdminPage() {
 
   const handleDeleteClient = async (clientId: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) return;
-
     try {
       await deleteUser(clientId);
       setClients(clients.filter(client => client.id !== clientId));
@@ -308,12 +307,12 @@ export default function ClientsAdminPage() {
                       {client.phoneNumber}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => router.push(`/admin/clients/${client.id}`)}
-                        className="text-blue-600 hover:text-blue-900 mr-3"
-                      >
-                        Voir
-                      </button>
+                      {/*<button*/}
+                      {/*  onClick={() => router.push(`/admin/clients/${client.id}`)}*/}
+                      {/*  className="text-blue-600 hover:text-blue-900 mr-3"*/}
+                      {/*>*/}
+                      {/*  Voir*/}
+                      {/*</button>*/}
                       <button
                         onClick={() => initEditClient(client)}
                         className="text-yellow-600 hover:text-yellow-900 mr-3"
