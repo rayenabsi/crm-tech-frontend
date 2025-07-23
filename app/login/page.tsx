@@ -30,7 +30,7 @@ export default function LoginPage() {
       const userId = decoded?.sub;
       localStorage.setItem("crm_tech_user_id", userId);
 
-      if (role.includes(Role.ADMIN.toString())) router.push("/admin/clients");
+      if (role.includes(Role.ADMIN.toString())) router.push("/admin/abonnements");
       else if (role.includes(Role.SALES_AGENT.toString())) router.push("/user-sales/clients");
       else if (role.includes(Role.TECH_AGENT.toString())) router.push("/usertech/dashboard");
       else if (role.includes(Role.CLIENT.toString())) router.push("/client/abonnements");
